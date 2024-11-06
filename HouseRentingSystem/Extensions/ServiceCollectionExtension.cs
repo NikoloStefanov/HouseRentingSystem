@@ -21,9 +21,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services;
         }
-        public static IServiceCollection AddApplicationsIdentity(this IServiceCollection services,IConfiguration confic)
+        public static IServiceCollection AddApplicationsIdentity(this IServiceCollection services, IConfiguration confic)
         {
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+
+                })
     .AddEntityFrameworkStores<ApplicationDbContext>();
             return services;
         }
