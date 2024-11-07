@@ -1,4 +1,5 @@
-﻿using HouseRentingSystem.Infrastructurea.Data;
+﻿using System.Reflection.Metadata.Ecma335;
+using HouseRentingSystem.Infrastructurea.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystem.Infrastructure.Data.Comman
@@ -22,6 +23,16 @@ namespace HouseRentingSystem.Infrastructure.Data.Comman
 		public IQueryable<T> AllReadOnly<T>() where T : class
 		{
 			return DbSet<T>().AsNoTracking();
+		}
+
+		public async Task AddAsync<T>(T entity) where T : class
+		{
+			await DbSet<T>().AddAsync(entity);
+		}
+
+		public async Task<int> SaveChangesAsync()
+		{
+			return await context.SaveChangesAsync();
 		}
 	}
 }

@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
+﻿
 
-namespace HouseRentingSystem.Extensions
+namespace System.Security.Claims
 {
     public static class ClaimPrincipalsExtensions
     {
