@@ -1,5 +1,4 @@
-﻿using HouseRentingSystem.Core.Models.Home;
-using HouseRentingSystem.Core.Models.House;
+﻿using HouseRentingSystem.Core.Models.House;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

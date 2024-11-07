@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HouseRentingSystem.Core.Models.Home
+namespace HouseRentingSystem.Core.Models.House
 {
-	public class HouseDetailsViewModel
-	{
-	}
+    public class HouseDetailsViewModel
+    {
+    }
 }
