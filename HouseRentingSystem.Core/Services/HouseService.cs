@@ -9,7 +9,7 @@ using HouseRentingSystem.Infrastructure.Data.Comman;
 using HouseRentingSystem.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HouseRentingSystem.Core.Services.House
+namespace HouseRentingSystem.Core.Services
 {
     public class HouseService : IHouseService
     {
@@ -22,10 +22,9 @@ namespace HouseRentingSystem.Core.Services.House
         public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHouses()
         {
             return await repository
-                .AllReadOnly<Infrastructure.Data.Models
-                .House>().OrderByDescending(a => a.Id)
+                .AllReadOnly<House>().OrderByDescending(a => a.Id)
                 .Take(3)
-                .Select(h => new HouseIndexServiceModel 
+                .Select(h => new HouseIndexServiceModel
                 {
                     id = h.Id,
                     ImageUrl = h.ImageUrl,

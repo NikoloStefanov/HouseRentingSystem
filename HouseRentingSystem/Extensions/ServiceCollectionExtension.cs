@@ -1,6 +1,6 @@
 ﻿
 using HouseRentingSystem.Core.Contracts.House;
-using HouseRentingSystem.Core.Services.House;
+using HouseRentingSystem.Core.Services;
 using HouseRentingSystem.Infrastructure.Data.Comman;
 using HouseRentingSystem.Infrastructurea.Data;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddApplicationsServices(this IServiceCollection service )
         {
             service.AddScoped<IHouseService, HouseService>();
+            service.AddScoped<IAgentService, AgentService>();
 
             return service;
         }

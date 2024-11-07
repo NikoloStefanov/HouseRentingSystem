@@ -6,17 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystem.Infrastructure.Data.Models
 {
+    [Index(nameof(PhoneNumber), IsUnique = true)]
     public class Agent
     {
-        /*The Agent class should have the following properties:
-•	Id – a unique integer, Primary Key
-•	PhoneNumber – a string with min length 7 and max length 15 (required)
-•	UserId – a string (required)
-•	User – an IdentityUser object
-*/
+  
         [Key]
         public int Id { get; set; }
         [Required]
