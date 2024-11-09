@@ -12,5 +12,6 @@ namespace HouseRentingSystem.Core.Contracts.House
         Task<bool> UserWithPhoneNumberExistsAsync(string phoneNumber);
         Task<bool> UserHasRentsAsync(string userId);
         Task CreateAsync(string usernId, string phoneNumber);
+        Task<int?> GetAgentIdAsync(string userId);
     }
 }

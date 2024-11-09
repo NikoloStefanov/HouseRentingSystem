@@ -1,11 +1,23 @@
-﻿using HouseRentingSystem.Core.Models.House;
+﻿using System.Security.Claims;
+using HouseRentingSystem.Core.Contracts.House;
+using HouseRentingSystem.Core.Models.House;
+using HouseRentingSystem.Models.Atributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HouseRentingSystem.Controllers
 {
     public class HouseController : BaseController
     {
+        private readonly IHouseService houseService;
+        private readonly IAgentService agentService;
+        public HouseController(IHouseService _houseService, IAgentService _agentService)
+        {
+            houseService = _houseService;
+            agentService = _agentService;
+        }
+    
         [AllowAnonymous]
         public async Task<IActionResult> All()
         {
@@ -23,15 +35,33 @@ namespace HouseRentingSystem.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Add()
+        [MustBeAgent]
+        public async Task<IActionResult> Add()
         {
+           
+            var model = new HouseFormModel()
+            {
+                Categories = await houseService.AllCategories()
+            };
 
-            return View();
+            return View(model);
         }
         [HttpPost]
+        [MustBeAgent]
         public async Task<IActionResult> Add(HouseFormModel model)
         {
-            return RedirectToAction(nameof(Details), new { id = 1 });
+            if (await houseService.CategoryExistAsync(model.CategoryId) == false)
+            {
+                ModelState.AddModelError(nameof(model.CategoryId), "");
+            }
+            if (ModelState.IsValid==false)
+            {
+                model.Categories = await houseService.AllCategories();
+                return View(model);
+            }
+            int? agentId = await agentService.GetAgentIdAsync(User.Id());
+            int newHouseId = await houseService.CreateAsync(model, agentId ?? 0);
+            return RedirectToAction(nameof(Details), new { id = newHouseId });
         }
         public async Task<IActionResult> Edit(int id)
         {
