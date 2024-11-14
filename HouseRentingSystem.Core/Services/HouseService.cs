@@ -109,6 +109,33 @@ namespace HouseRentingSystem.Core.Services
             return house.Id;
         }
 
+        public async Task<bool> Exists(int id)
+        {
+           return await repository.AllReadOnly<House>().AnyAsync(h => h.Id == id);
+        }
+
+        public async Task<HouseDetailsServiceModel> HouseDetailsById(int id)
+        {
+            return await repository.AllReadOnly<House>().Where(h => h.Id == id).Select(h => new HouseDetailsServiceModel()
+            {
+                Id = h.Id,
+                Address = h.Address,
+                Agent = new Models.Agent.AgentServiceModel()
+                {
+                    Email = h.Agent.User.Email,
+                    PhoneNumber = h.Agent.PhoneNumber
+                },
+                Category = h.Category.Name,
+                Description = h.Description,
+                ImageUrl = h.ImageUrl,
+                IsRentet = h.RenterId!=null,
+                PricePerMonth = h.PricePerMonth,
+                Title = h.Title
+
+
+            }).FirstAsync();
+        }
+
         public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHouses()
         {
             return await repository
