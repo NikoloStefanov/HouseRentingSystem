@@ -10,6 +10,7 @@ using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Comman;
 using HouseRentingSystem.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HouseRentingSystem.Core.Services
 {
@@ -75,6 +76,16 @@ namespace HouseRentingSystem.Core.Services
         public async Task<IEnumerable<string>> AllCategoriesNamesAsync()
         {
             return await repository.AllReadOnly<Category>().Select(c => c.Name).Distinct().ToListAsync();
+        }
+
+        public async Task<IEnumerable<HouseServiceModel>> AllHousesByAgentId(int agentId)
+        {
+            return await repository.AllReadOnly<House>().Where(h => h.AgentId == agentId).ProjectToHouseServiceModel().ToListAsync();
+        }
+
+        public async Task<IEnumerable<HouseServiceModel>> AllHousesByUserId(string userId)
+        {
+            return await repository.AllReadOnly<House>().Where(h => h.RenterId == userId).ProjectToHouseServiceModel().ToListAsync();
         }
 
         public async Task<bool> CategoryExistAsync(int categoryId)
