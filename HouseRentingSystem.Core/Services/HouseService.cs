@@ -37,8 +37,8 @@ namespace HouseRentingSystem.Core.Services
             }
             housesToShow = sorting switch
             {
-                HouseSorting.Price => housesToShow.OrderByDescending(h=>h.PricePerMonth),
-                HouseSorting.NotRentetFirst=>housesToShow.OrderBy(h=>h.RenterId==null)
+                HouseSorting.Price => housesToShow.OrderBy(h=>h.PricePerMonth),
+                HouseSorting.NotRentetFirst=>housesToShow.OrderBy(h=>h.RenterId!=null)
                 .ThenByDescending(h=>h.Id),
                 _ => housesToShow.OrderByDescending(h=>h.Id)
             };
