@@ -19,10 +19,13 @@ namespace HouseRentingSystem.Controllers
         }
     
         [AllowAnonymous]
-        public async Task<IActionResult> All()
+        public async Task<IActionResult> All([FromQuery]AllHousesQueryModel query)
         {
-            var model = new AllHousesQueryModel();
-            return View(model);
+            var model = await houseService.AllAsync(query.Category, query.SearchItem, query.Sorting, query.CurrentPage, query.HousesPerPages);
+
+            query.TotalHousesCount = model.TotalHousesCount;
+            query.Houses = model.Houses;
+            return View(query);
         }
         public async Task<IActionResult> Mine()
         {
