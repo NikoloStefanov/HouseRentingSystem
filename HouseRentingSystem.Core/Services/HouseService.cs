@@ -9,6 +9,7 @@ using HouseRentingSystem.Core.Models.Home;
 using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Comman;
 using HouseRentingSystem.Infrastructure.Data.Models;
+using HouseRentingSystem.Infrastructurea.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -16,10 +17,13 @@ namespace HouseRentingSystem.Core.Services
 {
     public class HouseService : IHouseService
     {
+
         private readonly IRepository repository;
-        public HouseService(IRepository _repository)
+        private readonly ApplicationDbContext _context;
+        public HouseService(IRepository _repository, ApplicationDbContext context)
         {
             repository = _repository;
+            _context = context;
         }
 
         public async Task<HouseQueryServiceModel> AllAsync(string? category = null, string? searchTerm = null, HouseSorting sorting = HouseSorting.Newest, int currentPage = 1, int housesPerPage = 1)
@@ -190,15 +194,15 @@ namespace HouseRentingSystem.Core.Services
 
         public async Task<bool> IsRented(int id)
         {
-            var house = await repository.AllReadOnly<House>().FirstOrDefaultAsync(h => h.Id == id);
+            var house = await _context.Houses.FindAsync(id);
+            var result = house.RenterId != null;
 
-
-            return house != null && house.RenterId != null;
+            return result;
         }
 
         public async Task<bool> IsRentedByUserWithId(int houseId, string userId)
         {
-            var houses = await repository.AllReadOnly<House>().FirstOrDefaultAsync(h => h.Id == houseId);
+            var houses = await _context.Houses.FindAsync(houseId);
             if (houses == null)
             {
                 return false;
@@ -226,24 +230,11 @@ namespace HouseRentingSystem.Core.Services
 
         public async void Rent(int houseId, string userId)
         {
-           
-                var house = await repository.All<House>().FirstOrDefaultAsync(h=>h.Id == houseId);
-                if (house == null)
-                {
-                    throw new InvalidOperationException($"House with ID {houseId} not found.");
-                }
 
-                if (house.RenterId != null)
-                {
-                    throw new InvalidOperationException("This house is already rented.");
-                }
+            var houses = await _context.Houses.FindAsync(houseId);
+            houses.RenterId = userId;
 
-                house.RenterId = userId;
-
-                // Логиране на актуализацията на къщата
-                Console.WriteLine($"Renting house {houseId} to user {userId}");
-
-                await repository.SaveChangesAsync();
+            await repository.SaveChangesAsync();
             
 
         }

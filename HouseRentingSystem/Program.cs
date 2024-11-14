@@ -1,9 +1,15 @@
+using HouseRentingSystem.Infrastructurea.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationsDbContext(builder.Configuration);
 builder.Services.AddApplicationsIdentity(builder.Configuration);
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
- builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddApplicationsServices();
 
