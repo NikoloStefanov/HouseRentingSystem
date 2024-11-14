@@ -1,6 +1,7 @@
 ﻿using HouseRentingSystem.Core.Enumeration;
 using HouseRentingSystem.Core.Models.Home;
 using HouseRentingSystem.Core.Models.House;
+using Microsoft.AspNetCore.Identity;
 
 namespace HouseRentingSystem.Core.Contracts.House
 {
@@ -20,6 +21,8 @@ namespace HouseRentingSystem.Core.Contracts.House
         Task<bool> Exists(int id);
         Task<HouseDetailsServiceModel> HouseDetailsById(int id);
 
-      
+        Task Edit(int houseId, HouseFormModel model);
+        Task<bool> HasAgentWithId(int houseId, string userId);
+        Task<HouseFormModel?> GetHouseFormModelByIdAsync(int id);
     }
 }

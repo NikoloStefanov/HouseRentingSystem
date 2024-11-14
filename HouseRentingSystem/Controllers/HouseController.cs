@@ -73,7 +73,7 @@ namespace HouseRentingSystem.Controllers
         {
             if (await houseService.CategoryExistAsync(model.CategoryId) == false)
             {
-                ModelState.AddModelError(nameof(model.CategoryId), "");
+                ModelState.AddModelError(nameof(model.CategoryId), "Category does not exist");
             }
             if (ModelState.IsValid==false)
             {
@@ -86,13 +86,40 @@ namespace HouseRentingSystem.Controllers
         }
         public async Task<IActionResult> Edit(int id)
         {
-            var model = new HouseFormModel();
+            if (await houseService.Exists(id) == false)
+            {
+                return BadRequest();
+            }
+            if (await houseService.HasAgentWithId(id,User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+            var house = await houseService.HouseDetailsById(id);
+            var model = await houseService.GetHouseFormModelByIdAsync(id);
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(int id,HouseFormModel house)
+        public async Task<IActionResult> Edit(int id,HouseFormModel model)
         {
-            return RedirectToAction(nameof(Details), new { id = 1 });
+            if (await houseService.Exists(id) == false)
+            {
+                return BadRequest();
+            }
+            if (await houseService.HasAgentWithId(id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+            if (await houseService.CategoryExistAsync(model.CategoryId) == false)
+            {
+                ModelState.AddModelError(nameof(model.CategoryId), "Category does not exist");
+            }
+            if (ModelState.IsValid == false)
+            {
+                model.Categories = await houseService.AllCategories();
+                return View(model);
+            }
+            await houseService.Edit(id, model);
+            return RedirectToAction(nameof(Details), new { id });
         }
         public async Task<IActionResult> Delete(int id)
         {
