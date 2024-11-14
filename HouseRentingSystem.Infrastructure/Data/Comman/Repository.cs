@@ -39,5 +39,10 @@ namespace HouseRentingSystem.Infrastructure.Data.Comman
         {
 			return await DbSet<T>().FindAsync(id);
 		}
-	}
+
+        public void Remove<T>(T entity) where T : class
+        {
+            context.Set<T>().Remove(entity);
+        }
+    }
 }
