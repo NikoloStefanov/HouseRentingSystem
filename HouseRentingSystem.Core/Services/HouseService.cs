@@ -26,7 +26,7 @@ namespace HouseRentingSystem.Core.Services
         {
             var housesToShow = repository.AllReadOnly<House>();
 
-            if (category !=null)
+            if (category != null)
             {
                 housesToShow = housesToShow.Where(h => h.Category.Name == category);
             }
@@ -38,17 +38,17 @@ namespace HouseRentingSystem.Core.Services
             }
             housesToShow = sorting switch
             {
-                HouseSorting.Price => housesToShow.OrderBy(h=>h.PricePerMonth),
-                HouseSorting.NotRentetFirst=>housesToShow.OrderBy(h=>h.RenterId!=null)
-                .ThenByDescending(h=>h.Id),
-                _ => housesToShow.OrderByDescending(h=>h.Id)
+                HouseSorting.Price => housesToShow.OrderBy(h => h.PricePerMonth),
+                HouseSorting.NotRentetFirst => housesToShow.OrderBy(h => h.RenterId != null)
+                .ThenByDescending(h => h.Id),
+                _ => housesToShow.OrderByDescending(h => h.Id)
             };
-            var houses = await housesToShow.Skip((currentPage-1)*housesPerPage).Take(housesPerPage).Select(h=> new HouseServiceModel()
+            var houses = await housesToShow.Skip((currentPage - 1) * housesPerPage).Take(housesPerPage).Select(h => new HouseServiceModel()
             {
                 Id = h.Id,
                 Address = h.Address,
                 ImageUrl = h.ImageUrl,
-                IsRentet = h.RenterId !=null,
+                IsRentet = h.RenterId != null,
                 PricePerMonth = h.PricePerMonth,
                 Title = h.Title
             }).ToListAsync();
@@ -93,16 +93,16 @@ namespace HouseRentingSystem.Core.Services
             return await repository.AllReadOnly<Category>().AnyAsync(c => c.Id == categoryId);
         }
 
-        public async  Task<int> CreateAsync(HouseFormModel model, int agentId)
+        public async Task<int> CreateAsync(HouseFormModel model, int agentId)
         {
             House house = new House()
             {
                 Address = model.Address,
                 AgentId = agentId,
-               CategoryId = model.CategoryId,
-              ImageUrl = model.Imagane,
-              PricePerMonth = model.PricePerMonth,
-              Title = model.Title
+                CategoryId = model.CategoryId,
+                ImageUrl = model.Imagane,
+                PricePerMonth = model.PricePerMonth,
+                Title = model.Title
             };
             await repository.AddAsync(house);
             await repository.SaveChangesAsync();
@@ -111,20 +111,20 @@ namespace HouseRentingSystem.Core.Services
 
         public async Task Delete(int id)
         {
-            var house = await repository.All<House>().FirstOrDefaultAsync(h => h.Id == id); 
+            var house = await repository.All<House>().FirstOrDefaultAsync(h => h.Id == id);
 
-            if (house != null) 
+            if (house != null)
             {
-                repository.Remove(house); 
-                await repository.SaveChangesAsync(); 
+                repository.Remove(house);
+                await repository.SaveChangesAsync();
             }
         }
 
         public async Task Edit(int houseId, HouseFormModel model)
         {
-            var house =await repository.GetByIdAsync<House>(houseId);
+            var house = await repository.GetByIdAsync<House>(houseId);
 
-            if (house!=null)
+            if (house != null)
             {
                 house.Address = model.Address;
                 house.CategoryId = model.CategoryId;
@@ -138,12 +138,12 @@ namespace HouseRentingSystem.Core.Services
 
         public async Task<bool> Exists(int id)
         {
-           return await repository.AllReadOnly<House>().AnyAsync(h => h.Id == id);
+            return await repository.AllReadOnly<House>().AnyAsync(h => h.Id == id);
         }
 
         public async Task<HouseFormModel?> GetHouseFormModelByIdAsync(int id)
         {
-            var house =  await repository.AllReadOnly<House>().Where(h => h.Id == id).Select(h => new HouseFormModel
+            var house = await repository.AllReadOnly<House>().Where(h => h.Id == id).Select(h => new HouseFormModel
             {
                 Address = h.Address,
                 CategoryId = h.CategoryId,
@@ -152,11 +152,11 @@ namespace HouseRentingSystem.Core.Services
                 Title = h.Title,
                 PricePerMonth = h.PricePerMonth
             }).FirstOrDefaultAsync();
-            if (house!=null)
+            if (house != null)
             {
                 house.Categories = await AllCategories();
             }
-           
+
 
             return house;
         }
@@ -180,12 +180,34 @@ namespace HouseRentingSystem.Core.Services
                 Category = h.Category.Name,
                 Description = h.Description,
                 ImageUrl = h.ImageUrl,
-                IsRentet = h.RenterId!=null,
+                IsRentet = h.RenterId != null,
                 PricePerMonth = h.PricePerMonth,
                 Title = h.Title
 
 
             }).FirstAsync();
+        }
+
+        public async Task<bool> IsRented(int id)
+        {
+            var house = await repository.AllReadOnly<House>().FirstOrDefaultAsync(h => h.Id == id);
+
+
+            return house != null && house.RenterId != null;
+        }
+
+        public async Task<bool> IsRentedByUserWithId(int houseId, string userId)
+        {
+            var houses = await repository.AllReadOnly<House>().FirstOrDefaultAsync(h => h.Id == houseId);
+            if (houses == null)
+            {
+                return false;
+            }
+            if (houses.RenterId != userId)
+            {
+                return false;
+            }
+            return true;
         }
 
         public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHouses()
@@ -200,6 +222,30 @@ namespace HouseRentingSystem.Core.Services
                     Title = h.Title
                 })
                 .ToListAsync();
+        }
+
+        public async void Rent(int houseId, string userId)
+        {
+           
+                var house = await repository.All<House>().FirstOrDefaultAsync(h=>h.Id == houseId);
+                if (house == null)
+                {
+                    throw new InvalidOperationException($"House with ID {houseId} not found.");
+                }
+
+                if (house.RenterId != null)
+                {
+                    throw new InvalidOperationException("This house is already rented.");
+                }
+
+                house.RenterId = userId;
+
+                // Логиране на актуализацията на къщата
+                Console.WriteLine($"Renting house {houseId} to user {userId}");
+
+                await repository.SaveChangesAsync();
+            
+
         }
     }
 }

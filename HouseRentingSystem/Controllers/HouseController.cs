@@ -128,18 +128,21 @@ namespace HouseRentingSystem.Controllers
             {
                 return BadRequest();
             }
+
             if (await houseService.HasAgentWithId(id, User.Id()) == false)
             {
                 return Unauthorized();
             }
+
             var house = await houseService.HouseDetailsById(id);
             var model = new HouseDetailsViewModel()
             {
+                id = house.Id,  // Добавете ID в модела, за да го предадете в POST метода
                 Title = house.Title,
                 Address = house.Address,
                 ImagaUrl = house.ImageUrl
-
             };
+
             return View(model);
         }
         [HttpPost]
@@ -149,19 +152,33 @@ namespace HouseRentingSystem.Controllers
             {
                 return BadRequest();
             }
+
             if (await houseService.HasAgentWithId(model.id, User.Id()) == false)
             {
                 return Unauthorized();
             }
-           await houseService.Delete(model.id);
-            return RedirectToAction(nameof(All));
+
+            await houseService.Delete(model.id); // Извършване на изтриването
+            return RedirectToAction(nameof(All)); // Пренасочване към списъка с имоти
 
         }
         [HttpPost]
         public async Task<IActionResult> Rent(int id)
         {
-            return RedirectToAction(nameof(Mine));
-
+            if (await houseService.Exists(id) == false)
+            {
+                return BadRequest();
+            }
+            if (await houseService.HasAgentWithId(id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+            if (await houseService.IsRented(id))
+            {
+                return BadRequest();
+            }
+            houseService.Rent(id, User.Id());
+            return RedirectToAction(nameof(All));
         }
         [HttpPost]
         public async Task<IActionResult> Leave(int id)
