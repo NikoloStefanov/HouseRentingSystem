@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using HouseRentingSystem.Core.Contracts.House;
+using HouseRentingSystem.Core.Exceptions;
 using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Comman;
 using HouseRentingSystem.Models.Atributes;
@@ -13,10 +14,12 @@ namespace HouseRentingSystem.Controllers
     {
         private readonly IHouseService houseService;
         private readonly IAgentService agentService;
-        public HouseController(IHouseService _houseService, IAgentService _agentService)
+        private readonly ILogger logger;
+        public HouseController(IHouseService _houseService, IAgentService _agentService, ILogger<HouseController> _logger)
         {
             houseService = _houseService;
             agentService = _agentService;
+            logger = _logger;
         }
     
         [AllowAnonymous]
@@ -184,7 +187,21 @@ namespace HouseRentingSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Leave(int id)
         {
-            return RedirectToAction(nameof(Mine));
+            if (await houseService.Exists(id) == false)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                await houseService.Leave(id, User.Id());
+            }
+            catch (UnautorizedActionException ex)
+            {
+                logger.LogError(ex,"HouseController/Leave");
+                return Unauthorized();
+            }
+          
+            return RedirectToAction(nameof(All));
 
         }
     }
