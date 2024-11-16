@@ -124,6 +124,7 @@ namespace HouseRentingSystem.Controllers
         }
         public async Task<IActionResult> Delete(int id)
         {
+            
             if (await houseService.Exists(id) == false)
             {
                 return BadRequest();
@@ -177,7 +178,7 @@ namespace HouseRentingSystem.Controllers
             {
                 return BadRequest();
             }
-            houseService.Rent(id, User.Id());
+           await houseService.Rent(id, User.Id());
             return RedirectToAction(nameof(All));
         }
         [HttpPost]

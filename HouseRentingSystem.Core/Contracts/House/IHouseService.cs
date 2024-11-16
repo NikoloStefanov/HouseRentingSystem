@@ -27,6 +27,6 @@ namespace HouseRentingSystem.Core.Contracts.House
         Task Delete(int id);
         Task<bool> IsRented(int id);
         Task<bool> IsRentedByUserWithId(int houseId, string userId);
-        void Rent(int houseId, string userId);
+        Task Rent(int houseId, string userId);
     }
 }

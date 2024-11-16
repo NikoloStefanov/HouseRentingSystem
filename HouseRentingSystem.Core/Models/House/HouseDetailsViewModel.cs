@@ -9,8 +9,8 @@ namespace HouseRentingSystem.Core.Models.House
     public class HouseDetailsViewModel
     {
         public int id { get; set; }
-        public string Title { get; set; } = null!;
-        public string Address { get; set; } = null!;
-        public string ImagaUrl { get; set; } = null!;
+        public string Title { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string ImagaUrl { get; set; } = string.Empty;
     }
 }

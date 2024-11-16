@@ -115,13 +115,8 @@ namespace HouseRentingSystem.Core.Services
 
         public async Task Delete(int id)
         {
-            var house = await repository.All<House>().FirstOrDefaultAsync(h => h.Id == id);
-
-            if (house != null)
-            {
-                repository.Remove(house);
-                await repository.SaveChangesAsync();
-            }
+            await repository.Delete<House>(id);
+            await repository.SaveChangesAsync();
         }
 
         public async Task Edit(int houseId, HouseFormModel model)
@@ -228,7 +223,7 @@ namespace HouseRentingSystem.Core.Services
                 .ToListAsync();
         }
 
-        public async void Rent(int houseId, string userId)
+        public async Task Rent(int houseId, string userId)
         {
 
             var houses = await _context.Houses.FindAsync(houseId);
