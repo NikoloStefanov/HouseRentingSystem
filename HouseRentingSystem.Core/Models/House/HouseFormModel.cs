@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using HouseRentingSystem.Core.Constans;
+using HouseRentingSystem.Core.Contracts;
 using HouseRentingSystem.Infrastructure.Constans;
 
 namespace HouseRentingSystem.Core.Models.House
 {
-    public class HouseFormModel
+    public class HouseFormModel : IHouseModel
     {
         [Required]
         [StringLength(DataConstans.TitleMaxLenght, MinimumLength = DataConstans.TitleMixLenght)]

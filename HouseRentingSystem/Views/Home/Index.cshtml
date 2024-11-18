@@ -15,7 +15,7 @@
         </p>
         <hr class="my-4">
         <p class="lead">
-            @if (User.Identity.IsAuthenticated)
+            @if (User?.Identity?.IsAuthenticated ?? false)
             {
                 <a asp-controller="House" asp-action="Add" class="btn btn-primary btn-lg"
            role="button">Add House</a>
@@ -37,7 +37,7 @@
                 <div class="carousel-caption d-none d-md-block">
                     <h5>
                         <a class="btn btn-primary" asp-controller="House" asp-action="Details"
-                       asp-route-id="@house.id"> @house.Title</a>
+                       asp-route-id="@house.id" asp-route-information="@house.GetInformation()"> @house.Title</a>
                     </h5>
                 </div>
             </div>

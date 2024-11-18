@@ -1,4 +1,5 @@
 using HouseRentingSystem.Infrastructurea.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options => 
+{
+    options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+});
 
 builder.Services.AddApplicationsServices();
 
@@ -36,7 +40,16 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapDefaultControllerRoute();
-app.MapRazorPages();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name:"House Details",
+        pattern:"/House/Details/{id}/{information}",
+        defaults: new { Controller = "House", Action = "Details" }
+        );
+    endpoints.MapDefaultControllerRoute();
+    endpoints.MapRazorPages();
+});
+
 
 await app.RunAsync();

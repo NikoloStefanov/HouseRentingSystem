@@ -1,12 +1,14 @@
 ﻿using System.Security.Claims;
 using HouseRentingSystem.Core.Contracts.House;
 using HouseRentingSystem.Core.Exceptions;
+using HouseRentingSystem.Core.Extensions;
 using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Comman;
 using HouseRentingSystem.Models.Atributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.VisualBasic;
 
 namespace HouseRentingSystem.Controllers
 {
@@ -48,15 +50,19 @@ namespace HouseRentingSystem.Controllers
             }
             return View(model);
         }
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string information)
         {
 
             if (await houseService.Exists(id) == false)
             {
                 return BadRequest();
             }
-
+           
             var model = await houseService.HouseDetailsById(id);
+            if (information!=model.GetInformation())
+            {
+                return BadRequest();
+            }
             return View(model);
         }
         [HttpGet]
@@ -86,7 +92,7 @@ namespace HouseRentingSystem.Controllers
             }
             int? agentId = await agentService.GetAgentIdAsync(User.Id());
             int newHouseId = await houseService.CreateAsync(model, agentId ?? 0);
-            return RedirectToAction(nameof(Details), new { id = newHouseId });
+            return RedirectToAction(nameof(Details), new { id = newHouseId, information = model.GetInformation() });
         }
         public async Task<IActionResult> Edit(int id)
         {
@@ -123,7 +129,7 @@ namespace HouseRentingSystem.Controllers
                 return View(model);
             }
             await houseService.Edit(id, model);
-            return RedirectToAction(nameof(Details), new { id });
+            return RedirectToAction(nameof(Details), new { id, information = model.GetInformation() }) ;
         }
         public async Task<IActionResult> Delete(int id)
         {
