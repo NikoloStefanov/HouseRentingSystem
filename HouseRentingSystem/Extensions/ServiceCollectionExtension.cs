@@ -1,4 +1,5 @@
 ﻿
+using HouseRentingSystem.Core.Contracts;
 using HouseRentingSystem.Core.Contracts.House;
 using HouseRentingSystem.Core.Services;
 using HouseRentingSystem.Infrastructure.Data.Comman;
@@ -14,6 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             service.AddScoped<IHouseService, HouseService>();
             service.AddScoped<IAgentService, AgentService>();
+            service.AddScoped<IStatisticService, StatisticService>();
 
             return service;
         }
