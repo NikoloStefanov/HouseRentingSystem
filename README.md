@@ -1,5 +1,5 @@
 # HouseRentingSystem
-A project for managing house rentals. The system allows users to browse available houses for rent, add new listings, and make inquiries.
+
 
 ## How to Run the Project
 
