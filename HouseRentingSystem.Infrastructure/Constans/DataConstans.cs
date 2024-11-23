@@ -19,5 +19,10 @@ namespace HouseRentingSystem.Infrastructure.Constans
         public const int PhoneMinLenght = 7;
         public const string HouseRentingPriceMin = "0";
         public const string HouseRentingPriceMax = "2000";
+        public const int UserFirstNameMaxLength = 15;
+        public const int UserFirstNameMinLength = 2;
+        public const int UserLastNameMinLength = 3;
+        public const int UserLastNameMaxLength = 15;
+       
     }
 }
