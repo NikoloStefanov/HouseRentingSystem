@@ -179,10 +179,10 @@ namespace HouseRentingSystem.Controllers
             {
                 return BadRequest();
             }
-            if (await houseService.HasAgentWithId(id, User.Id()) == false)
+          /*  if (await houseService.HasAgentWithId(id, User.Id()) == false)
             {
                 return Unauthorized();
-            }
+            }*/
             if (await houseService.IsRented(id))
             {
                 return BadRequest();
